@@ -21,66 +21,98 @@ public class CalculationServiceTest {
     }
 
     @Test
-    void vehiclesThatShouldBeCharged() {
-        // CAR
-        Car car = createCar();
+    void itShouldChargeTotalFeeOf60SEKPerDate() {
+        Car car = new Car();
+        setPassageTime3Days(car);
 
         Integer carTaxSum = service.getTax(car);
 
-        Assertions.assertEquals(1, carTaxSum);
+        Assertions.assertEquals(89, carTaxSum);
+    }
 
-        // MOTORBIKE
+    @Test
+    void itShouldNotChargeDuringJuly() {
+        Car car = new Car();
+        setPassageTimeDuringJuly(car);
+
+        Integer carTaxSum = service.getTax(car);
+
+        Assertions.assertEquals(0, carTaxSum);
+    }
+
+    @Test
+    void itShouldChargeOncePerHour() {
         Motorbike motorbike = new Motorbike();
-        setPassageTime(motorbike);
+        setPassageTimeOneHour(motorbike);
 
         Integer motorbikeTaxSum = service.getTax(motorbike);
 
-        Assertions.assertEquals(1, motorbikeTaxSum);
+        Assertions.assertEquals(18, motorbikeTaxSum);
     }
+
+    @Test
+    void itShouldNotChargeOnPublicHoliday() {
+        // or day before public holiday
+        Car car = new Car();
+        setPassageTimePublicHoliday(car);
+
+        Integer carTaxSum = service.getTax(car);
+
+        Assertions.assertEquals(18, carTaxSum);
+    }
+
 
     @Test
     void vehiclesThatShouldNotBeCharged() {
         // BUS
         Bus bus = new Bus();
-        setPassageTime(bus);
+        setPassageTime3Days(bus);
         Integer busTaxSum = service.getTax(bus);
         Assertions.assertEquals(0, busTaxSum);
 
         // DIPLOMAT VEHICLE
         DiplomatVehicle diplomatVehicle = new DiplomatVehicle();
-        setPassageTime(diplomatVehicle);
+        setPassageTime3Days(diplomatVehicle);
         Integer diplomatVTaxSum = service.getTax(diplomatVehicle);
         Assertions.assertEquals(0, diplomatVTaxSum);
 
         // EMERGENCY VEHICLE
         EmergencyVehicle emergencyVehicle = new EmergencyVehicle();
-        setPassageTime(emergencyVehicle);
+        setPassageTime3Days(emergencyVehicle);
         Integer EmergVTaxSum = service.getTax(emergencyVehicle);
         Assertions.assertEquals(0, EmergVTaxSum);
 
         // FOREIGN VEHICLE
         ForeignVehicle foreignVehicle = new ForeignVehicle();
-        setPassageTime(foreignVehicle);
+        setPassageTime3Days(foreignVehicle);
         Integer foreignVTaxSum = service.getTax(foreignVehicle);
         Assertions.assertEquals(0, foreignVTaxSum);
 
         // MILITARY VEHICLE
         MilitaryVehicle militaryVehicle = new MilitaryVehicle();
-        setPassageTime(militaryVehicle);
+        setPassageTime3Days(militaryVehicle);
         Integer militrVTaxSum = service.getTax(militaryVehicle);
         Assertions.assertEquals(0, militrVTaxSum);
 
     }
 
-    private Car createCar() {
-        Car car = new Car();
-        car.setRegNum("ABC123");
-        setPassageTime(car);
-
-        return car;
+    private void setPassageTimeDuringJuly(AbstractVehicle vehicle) {
+        vehicle.addPassageTime(toLocalDateTime("2013-07-07 06:23:27"));
+        vehicle.addPassageTime(toLocalDateTime("2013-07-07 14:23:27"));
     }
 
-    private void setPassageTime(AbstractVehicle vehicle) {
+    private void setPassageTimeOneHour(AbstractVehicle vehicle) {
+        vehicle.addPassageTime(toLocalDateTime("2013-02-07 06:47:06"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-07 07:17:46"));
+    }
+
+    private void setPassageTimePublicHoliday(AbstractVehicle vehicle) {
+        vehicle.addPassageTime(toLocalDateTime("2013-12-19 15:58:06"));
+        vehicle.addPassageTime(toLocalDateTime("2013-12-23 15:58:06"));
+        vehicle.addPassageTime(toLocalDateTime("2013-12-24 06:47:06"));
+    }
+
+    private void setPassageTime3Days(AbstractVehicle vehicle) {
         vehicle.addPassageTime(toLocalDateTime("2013-01-14 21:00:00"));
         vehicle.addPassageTime(toLocalDateTime("2013-01-15 21:00:00"));
         vehicle.addPassageTime(toLocalDateTime("2013-02-07 06:23:27"));

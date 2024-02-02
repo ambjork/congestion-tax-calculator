@@ -17,7 +17,7 @@ public abstract class AbstractVehicle {
         this.regNum = regNum;
     }
 
-    public List<LocalDateTime> getPassageTime() {
+    public List<LocalDateTime> getPassageTimes() {
         return passageTimeList;
     }
 
