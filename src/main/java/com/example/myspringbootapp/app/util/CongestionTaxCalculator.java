@@ -1,4 +1,7 @@
-package com.example.myspringbootapp.model;
+package com.example.myspringbootapp.app.util;
+
+import com.example.myspringbootapp.app.model.AbstractVehicle;
+import com.example.myspringbootapp.app.model.VehicleType;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -7,9 +10,9 @@ import java.util.Map;
 
 public class CongestionTaxCalculator {
 
-    private static Map<String, Integer> tollFreeVehicles = new HashMap<>();
+    /*private static Map<String, Integer> tollFreeVehicles = new HashMap<>();*/
 
-    static {
+    /*static {
         tollFreeVehicles.put("Motorcycle", 0);
         tollFreeVehicles.put("Tractor", 1);
         tollFreeVehicles.put("Emergency", 2);
@@ -17,29 +20,24 @@ public class CongestionTaxCalculator {
         tollFreeVehicles.put("Foreign", 4);
         tollFreeVehicles.put("Military", 5);
 
-    }
+    }*/
     
-    public int getTax(Vehicle vehicle, Date[] dates)
-    {
+    public static int getTax(AbstractVehicle vehicle, Date[] dates) {
         Date intervalStart = dates[0];
         int totalFee = 0;
 
-        for (int i = 0; i < dates.length ; i++) {
-            Date date = dates[i];
+        for (Date date : dates) {
             int nextFee = GetTollFee(date, vehicle);
             int tempFee = GetTollFee(intervalStart, vehicle);
 
             long diffInMillies = date.getTime() - intervalStart.getTime();
-            long minutes = diffInMillies/1000/60;
+            long minutes = diffInMillies / 1000 / 60;
 
-            if (minutes <= 60)
-            {
+            if (minutes <= 60) {
                 if (totalFee > 0) totalFee -= tempFee;
                 if (nextFee >= tempFee) tempFee = nextFee;
                 totalFee += tempFee;
-            }
-            else
-            {
+            } else {
                 totalFee += nextFee;
             }
         }                
@@ -48,15 +46,16 @@ public class CongestionTaxCalculator {
         return totalFee;
     }
 
-    private boolean IsTollFreeVehicle(Vehicle vehicle) {
+/*    private static boolean IsTollFreeVehicle(AbstractVehicle vehicle) {
         if (vehicle == null) return false;
-        String vehicleType = vehicle.getVehicleType();
+        VehicleType vehicleType = vehicle.getVehicleType();
         return tollFreeVehicles.containsKey(vehicleType);
-    }
+    }*/
 
-    public int GetTollFee(Date date, Vehicle vehicle)
+    //TODO: refactor Date type to LocalDateTime
+    public static int GetTollFee(Date date, AbstractVehicle vehicle)
     {
-        if (IsTollFreeDate(date) || IsTollFreeVehicle(vehicle)) return 0;
+        if (IsTollFreeDate(date)/* || IsTollFreeVehicle(vehicle)*/) return 0;
 
         int hour = date.getHours();
         int minute = date.getMinutes();
@@ -73,7 +72,7 @@ public class CongestionTaxCalculator {
         else return 0;
     }
 
-    private Boolean IsTollFreeDate(Date date)
+    private static Boolean IsTollFreeDate(Date date)
     {
         int year = date.getYear();
         int month = date.getMonth() + 1;
