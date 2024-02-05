@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,18 +17,18 @@ public class CalculationServiceTest {
     CalculationService service;
 
     @Test
-    void contextLoads() throws Exception {
+    void contextLoads() {
         assertThat(service).isNotNull();
     }
 
     @Test
-    void itShouldChargeTotalFeeOf60SEKPerDate() {
+    void itShouldOnlyChargeTotalFeeOf60SEKPerDate() {
         Car car = new Car();
-        setPassageTime3Days(car);
+        setPassageTimeTotalFee60SEKPerDay(car);
 
         Integer carTaxSum = service.getTax(car);
 
-        Assertions.assertEquals(89, carTaxSum);
+        Assertions.assertEquals(60, carTaxSum);
     }
 
     @Test
@@ -40,8 +41,9 @@ public class CalculationServiceTest {
         Assertions.assertEquals(0, carTaxSum);
     }
 
+    // TODO: failing test
     @Test
-    void itShouldChargeOncePerHour() {
+    void itShouldOnlyChargeOncePerHour() {
         Motorbike motorbike = new Motorbike();
         setPassageTimeOneHour(motorbike);
 
@@ -66,31 +68,31 @@ public class CalculationServiceTest {
     void vehiclesThatShouldNotBeCharged() {
         // BUS
         Bus bus = new Bus();
-        setPassageTime3Days(bus);
+        setPassageTimeOneHour(bus);
         Integer busTaxSum = service.getTax(bus);
         Assertions.assertEquals(0, busTaxSum);
 
         // DIPLOMAT VEHICLE
         DiplomatVehicle diplomatVehicle = new DiplomatVehicle();
-        setPassageTime3Days(diplomatVehicle);
+        setPassageTimeOneHour(diplomatVehicle);
         Integer diplomatVTaxSum = service.getTax(diplomatVehicle);
         Assertions.assertEquals(0, diplomatVTaxSum);
 
         // EMERGENCY VEHICLE
         EmergencyVehicle emergencyVehicle = new EmergencyVehicle();
-        setPassageTime3Days(emergencyVehicle);
+        setPassageTimeOneHour(emergencyVehicle);
         Integer EmergVTaxSum = service.getTax(emergencyVehicle);
         Assertions.assertEquals(0, EmergVTaxSum);
 
         // FOREIGN VEHICLE
         ForeignVehicle foreignVehicle = new ForeignVehicle();
-        setPassageTime3Days(foreignVehicle);
+        setPassageTimeOneHour(foreignVehicle);
         Integer foreignVTaxSum = service.getTax(foreignVehicle);
         Assertions.assertEquals(0, foreignVTaxSum);
 
         // MILITARY VEHICLE
         MilitaryVehicle militaryVehicle = new MilitaryVehicle();
-        setPassageTime3Days(militaryVehicle);
+        setPassageTimeOneHour(militaryVehicle);
         Integer militrVTaxSum = service.getTax(militaryVehicle);
         Assertions.assertEquals(0, militrVTaxSum);
 
@@ -110,6 +112,21 @@ public class CalculationServiceTest {
         vehicle.addPassageTime(toLocalDateTime("2013-12-19 15:58:06"));
         vehicle.addPassageTime(toLocalDateTime("2013-12-23 15:58:06"));
         vehicle.addPassageTime(toLocalDateTime("2013-12-24 06:47:06"));
+    }
+
+    private void setPassageTimeTotalFee60SEKPerDay(AbstractVehicle vehicle) {
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 06:20:27"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 06:30:27"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 06:40:27"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 14:35:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 15:29:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 15:47:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 16:01:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 16:13:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 16:48:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 17:49:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 18:29:00"));
+        vehicle.addPassageTime(toLocalDateTime("2013-02-08 18:35:00"));
     }
 
     private void setPassageTime3Days(AbstractVehicle vehicle) {

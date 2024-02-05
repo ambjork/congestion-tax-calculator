@@ -4,10 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
-public class WebController {
+public class CalculationController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/calculation")
     public ResponseEntity<String> testGetRequest() {
@@ -16,7 +15,7 @@ public class WebController {
 
     @RequestMapping(method = RequestMethod.POST, path = "/calculation")
     public ResponseEntity<String> testPostRequest() {
-
+        // TODO: Connect the service
         return ResponseEntity.ok("POST request successful");
     }
 }
